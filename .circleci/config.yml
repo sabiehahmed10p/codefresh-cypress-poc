@@ -1,0 +1,33 @@
+version: 2.1
+orbs:
+  cypress: cypress-io/cypress@1
+workflows:
+  build:
+    jobs:
+      - cypress/install:
+          build: 'npm install'
+      - cypress/run:
+          requires:
+            - cypress/install
+          record: true # record results on Cypress Dashboard
+          parallel: true # split all specs across machines
+          parallelism: 2 # use 2 CircleCI machines to finish quickly
+          group: 'all tests'
+  weekly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * 0"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - cypress/install:
+          build: 'npm install'
+      - cypress/run:
+          requires:
+            - cypress/install
+          record: true # record results on Cypress Dashboard
+          parallel: true # split all specs across machines
+          parallelism: 2 # use 2 CircleCI machines to finish quickly
+          group: 'all tests'
