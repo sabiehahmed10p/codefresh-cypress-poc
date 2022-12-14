@@ -1,0 +1,53 @@
+# More examples of Codefresh YAML can be found at
+# https://codefresh.io/docs/docs/yaml-examples/examples/
+
+version: "1.0"
+# Stages can help you organize your steps in stages
+
+mode: parallel
+
+stages:
+  - "prep"
+  - "build"
+  - "cypress_test"
+
+steps:
+  clone:
+    title: "Cloning repository"
+    type: "git-clone"
+    repo: "https://github.com/sabiehahmed10p/codefresh-cypress-poc.git"
+    # Clone the master branch. Or, use ${{CF_BRANCH}} to get branch name from trigger
+    # Learn more at https://codefresh.io/docs/docs/codefresh-yaml/variables/
+    revision: "main"
+    stage: "prep"
+
+  build_test_image:
+    stage: build
+    title: Building Test Image
+    type: build
+    image_name: sabiehahmed/cypress-poc
+    tag: '${{CF_BRANCH_TAG_NORMALIZED}}-TEST'
+    target: test-env
+    dockerfile: Dockerfile
+    registry: dockerhub
+    disable_push: true
+    when:
+      steps:
+        - name: clone
+          on:
+            - success
+
+  cypress_test:
+    title: "e2e tests"
+    type: "freestyle" # Run any command
+    image: ${{build_test_image}} # The image in which command will be executed
+    working_directory: /app # Running command where code cloned
+    fail_fast: true
+    commands:
+      - "npm run cy:ci"
+    when:
+      steps:
+        - name: build
+          on:
+            - success
+
