@@ -1,8 +1,9 @@
 /* eslint-disable global-require */
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { defineConfig } = require('cypress')
+const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
+    projectId: "5zkijh",
     numTestsKeptInMemory: 25,
     defaultCommandTimeout: 15000,
     experimentalFetchPolyfill: true,

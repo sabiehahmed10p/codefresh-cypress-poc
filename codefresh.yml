@@ -44,7 +44,7 @@ steps:
     working_directory: /app # Running command where code cloned
     fail_fast: true
     commands:
-      - "npm run cy:ci"
+      - "npx cypress run --record --key ${{CYPRESS_KEY}}"
     when:
       steps:
         - name: build
